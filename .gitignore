@@ -1,0 +1,11 @@
+test/
+results/
+darknet
+
+# vscode
+.vscode/
+*.code-workspace
+
+.DS_Store
+
+*.weights
