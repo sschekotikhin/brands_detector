@@ -10,3 +10,6 @@ predictions.jpg
 .DS_Store
 
 *.weights
+
+venv/
+__pycache__/
