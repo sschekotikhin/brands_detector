@@ -58,9 +58,9 @@ OS := $(shell uname)
 # ARCH= -gencode arch=compute_86,code=[sm_86,compute_86]
 
 
-VPATH=./src/
-EXEC=darknet
-OBJDIR=./obj/
+VPATH=./network/src/
+EXEC=./bin/darknet
+OBJDIR=./network/obj/
 
 ifeq ($(LIBSO), 1)
 LIBNAMESO=libdarknet.so
@@ -160,7 +160,7 @@ endif
 OBJS = $(addprefix $(OBJDIR), $(OBJ))
 DEPS = $(wildcard src/*.h) Makefile include/darknet.h
 
-all: $(OBJDIR) results $(EXEC) $(LIBNAMESO) $(APPNAMESO)
+all: $(OBJDIR) bin results $(EXEC) $(LIBNAMESO) $(APPNAMESO)
 
 ifeq ($(LIBSO), 1)
 CFLAGS+= -fPIC
@@ -185,9 +185,11 @@ $(OBJDIR)%.o: %.cu $(DEPS)
 	$(NVCC) $(ARCH) $(COMMON) --compiler-options "$(CFLAGS)" -c $< -o $@
 
 $(OBJDIR):
-	mkdir -p $(OBJDIR)
+	mkdir -p network/$(OBJDIR)
 results:
-	mkdir -p results
+	mkdir -p network/results
+bin:
+	mkdir -p bin
 
 .PHONY: clean
 

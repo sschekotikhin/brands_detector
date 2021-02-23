@@ -1,6 +1,7 @@
 test/
 results/
 darknet
+predictions.jpg
 
 # vscode
 .vscode/
