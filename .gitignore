@@ -13,3 +13,6 @@ predictions.jpg
 
 venv/
 __pycache__/
+
+*.list
+build_release/

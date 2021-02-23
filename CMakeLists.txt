@@ -37,7 +37,7 @@ enable_language(C)
 enable_language(CXX)
 
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/Modules/" ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/network/cmake/Modules/" ${CMAKE_MODULE_PATH})
 
 set(default_build_type "Release")
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -53,10 +53,10 @@ if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_LIST_DIR}" CACHE PATH "Install prefix" FORCE)
 endif()
 
-set(INSTALL_BIN_DIR      "${CMAKE_CURRENT_LIST_DIR}" CACHE PATH "Path where exe and dll will be installed")
+set(INSTALL_BIN_DIR      "${CMAKE_CURRENT_LIST_DIR}/bin" CACHE PATH "Path where exe and dll will be installed")
 set(INSTALL_LIB_DIR      "${CMAKE_CURRENT_LIST_DIR}" CACHE PATH "Path where lib will be installed")
-set(INSTALL_INCLUDE_DIR  "include/darknet"           CACHE PATH "Path where headers will be installed")
-set(INSTALL_CMAKE_DIR    "share/darknet"             CACHE PATH "Path where cmake configs will be installed")
+set(INSTALL_INCLUDE_DIR  "network/include/darknet"           CACHE PATH "Path where headers will be installed")
+set(INSTALL_CMAKE_DIR    "network/share/darknet"             CACHE PATH "Path where cmake configs will be installed")
 
 include(CheckLanguage)
 check_language(CUDA)
@@ -96,9 +96,9 @@ else()
 endif()
 
 if(USE_INTEGRATED_LIBS)
-  set(PThreads_windows_DIR ${CMAKE_CURRENT_LIST_DIR}/3rdparty/pthreads CACHE PATH "Path where pthreads for windows can be located")
+  set(PThreads_windows_DIR ${CMAKE_CURRENT_LIST_DIR}/network/3rdparty/pthreads CACHE PATH "Path where pthreads for windows can be located")
 endif()
-set(Stb_DIR ${CMAKE_CURRENT_LIST_DIR}/3rdparty/stb CACHE PATH "Path where Stb image library can be located")
+set(Stb_DIR ${CMAKE_CURRENT_LIST_DIR}/network/3rdparty/stb CACHE PATH "Path where Stb image library can be located")
 
 set(CMAKE_DEBUG_POSTFIX d)
 set(CMAKE_THREAD_PREFER_PTHREAD ON)
@@ -256,53 +256,53 @@ foreach(p LIB BIN INCLUDE CMAKE)
 endforeach()
 
 configure_file(
-  "${CMAKE_CURRENT_LIST_DIR}/src/version.h.in"
-  "${CMAKE_CURRENT_LIST_DIR}/src/version.h"
+  "${CMAKE_CURRENT_LIST_DIR}/network/src/version.h.in"
+  "${CMAKE_CURRENT_LIST_DIR}/network/src/version.h"
 )
 
 #look for all *.h files in src folder
-file(GLOB headers "${CMAKE_CURRENT_LIST_DIR}/src/*.h")
+file(GLOB headers "${CMAKE_CURRENT_LIST_DIR}/network/src/*.h")
 #add also files in the include folder
 list(APPEND headers
-  ${CMAKE_CURRENT_LIST_DIR}/include/darknet.h
+  ${CMAKE_CURRENT_LIST_DIR}/network/include/darknet.h
 )
 #remove windows only files
 if(NOT MSVC)
   list(REMOVE_ITEM headers
-    ${CMAKE_CURRENT_LIST_DIR}/src/gettimeofday.h
-    ${CMAKE_CURRENT_LIST_DIR}/src/getopt.h
+    ${CMAKE_CURRENT_LIST_DIR}/network/src/gettimeofday.h
+    ${CMAKE_CURRENT_LIST_DIR}/network/src/getopt.h
   )
 endif()
 #set(exported_headers ${headers})
 
 #look for all *.c files in src folder
-file(GLOB sources "${CMAKE_CURRENT_LIST_DIR}/src/*.c")
+file(GLOB sources "${CMAKE_CURRENT_LIST_DIR}/network/src/*.c")
 #add also .cpp files
 list(APPEND sources
-  ${CMAKE_CURRENT_LIST_DIR}/src/http_stream.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/src/image_opencv.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/network/src/http_stream.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/network/src/image_opencv.cpp
 )
 #remove darknet.c file which is necessary only for the executable, not for the lib
 list(REMOVE_ITEM sources
-  ${CMAKE_CURRENT_LIST_DIR}/src/darknet.c
+  ${CMAKE_CURRENT_LIST_DIR}/network/src/darknet.c
 )
 #remove windows only files
 if(NOT MSVC)
   list(REMOVE_ITEM sources
-    ${CMAKE_CURRENT_LIST_DIR}/src/gettimeofday.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/getopt.c
+    ${CMAKE_CURRENT_LIST_DIR}/network/src/gettimeofday.c
+    ${CMAKE_CURRENT_LIST_DIR}/network/src/getopt.c
   )
 endif()
 
 if(ENABLE_CUDA)
-  file(GLOB cuda_sources "${CMAKE_CURRENT_LIST_DIR}/src/*.cu")
+  file(GLOB cuda_sources "${CMAKE_CURRENT_LIST_DIR}/network/src/*.cu")
 endif()
 
 if(BUILD_AS_CPP)
   set_source_files_properties(${sources} PROPERTIES LANGUAGE CXX)
 endif()
 
-add_library(dark ${CMAKE_CURRENT_LIST_DIR}/include/yolo_v2_class.hpp ${CMAKE_CURRENT_LIST_DIR}/src/yolo_v2_class.cpp ${sources} ${headers} ${cuda_sources})
+add_library(dark ${CMAKE_CURRENT_LIST_DIR}/network/include/yolo_v2_class.hpp ${CMAKE_CURRENT_LIST_DIR}/network/src/yolo_v2_class.cpp ${sources} ${headers} ${cuda_sources})
 set_target_properties(dark PROPERTIES POSITION_INDEPENDENT_CODE ON)
 if(ENABLE_CUDA)
   set_target_properties(dark PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
@@ -316,23 +316,23 @@ endif()
 set_target_properties(dark PROPERTIES OUTPUT_NAME "darknet")
 
 if(OpenCV_FOUND AND OpenCV_VERSION VERSION_GREATER "3.0" AND BUILD_USELIB_TRACK)
-  add_executable(uselib_track ${CMAKE_CURRENT_LIST_DIR}/src/yolo_console_dll.cpp)
+  add_executable(uselib_track ${CMAKE_CURRENT_LIST_DIR}/network/src/yolo_console_dll.cpp)
 endif()
 
-add_executable(uselib ${CMAKE_CURRENT_LIST_DIR}/src/yolo_console_dll.cpp)
+add_executable(uselib ${CMAKE_CURRENT_LIST_DIR}/network/src/yolo_console_dll.cpp)
 if(BUILD_AS_CPP)
   set_target_properties(uselib PROPERTIES LINKER_LANGUAGE CXX)
 endif()
 
-add_executable(darknet ${CMAKE_CURRENT_LIST_DIR}/src/darknet.c ${sources} ${headers} ${cuda_sources})
+add_executable(darknet ${CMAKE_CURRENT_LIST_DIR}/network/src/darknet.c ${sources} ${headers} ${cuda_sources})
 if(BUILD_AS_CPP)
-  set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/src/darknet.c PROPERTIES LANGUAGE CXX)
+  set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/network/src/darknet.c PROPERTIES LANGUAGE CXX)
   set_target_properties(darknet PROPERTIES LINKER_LANGUAGE CXX)
 endif()
 
-target_include_directories(darknet PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include> $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/src> $<INSTALL_INTERFACE:${DARKNET_INSTALL_INCLUDE_DIR}> $<BUILD_INTERFACE:${Stb_INCLUDE_DIR}>)
-target_include_directories(dark PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include> $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/src> $<INSTALL_INTERFACE:${DARKNET_INSTALL_INCLUDE_DIR}> $<BUILD_INTERFACE:${Stb_INCLUDE_DIR}>)
-target_include_directories(uselib PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include> $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/src> $<INSTALL_INTERFACE:${DARKNET_INSTALL_INCLUDE_DIR}> $<BUILD_INTERFACE:${Stb_INCLUDE_DIR}>)
+target_include_directories(darknet PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/network/include> $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/network/src> $<INSTALL_INTERFACE:${DARKNET_INSTALL_INCLUDE_DIR}> $<BUILD_INTERFACE:${Stb_INCLUDE_DIR}>)
+target_include_directories(dark PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/network/include> $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/network/src> $<INSTALL_INTERFACE:${DARKNET_INSTALL_INCLUDE_DIR}> $<BUILD_INTERFACE:${Stb_INCLUDE_DIR}>)
+target_include_directories(uselib PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/network/include> $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/network/src> $<INSTALL_INTERFACE:${DARKNET_INSTALL_INCLUDE_DIR}> $<BUILD_INTERFACE:${Stb_INCLUDE_DIR}>)
 
 target_compile_definitions(darknet PRIVATE -DUSE_CMAKE_LIBS)
 target_compile_definitions(dark PRIVATE -DUSE_CMAKE_LIBS)
@@ -427,7 +427,7 @@ if(OpenCV_FOUND AND OpenCV_VERSION VERSION_GREATER "3.0" AND BUILD_USELIB_TRACK)
   if(BUILD_AS_CPP)
     set_target_properties(uselib_track PROPERTIES LINKER_LANGUAGE CXX)
   endif()
-  target_include_directories(uselib_track PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include)
+  target_include_directories(uselib_track PRIVATE ${CMAKE_CURRENT_LIST_DIR}/network/include)
   target_link_libraries(uselib_track PRIVATE ${OpenCV_LINKED_COMPONENTS})
   if(ENABLE_ZED_CAMERA)
     target_link_libraries(uselib_track PRIVATE ${ZED_LIBRARIES})
@@ -441,18 +441,16 @@ if(OpenCV_FOUND AND OpenCV_VERSION VERSION_GREATER "3.0" AND BUILD_USELIB_TRACK)
 endif()
 
 #set_target_properties(dark PROPERTIES PUBLIC_HEADER "${exported_headers};${CMAKE_CURRENT_LIST_DIR}/include/yolo_v2_class.hpp")
-set_target_properties(dark PROPERTIES PUBLIC_HEADER "${CMAKE_CURRENT_LIST_DIR}/include/darknet.h;${CMAKE_CURRENT_LIST_DIR}/include/yolo_v2_class.hpp")
+set_target_properties(dark PROPERTIES PUBLIC_HEADER "${CMAKE_CURRENT_LIST_DIR}/network/include/darknet.h;${CMAKE_CURRENT_LIST_DIR}/network/include/yolo_v2_class.hpp")
 
 set_target_properties(dark PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
 install(TARGETS dark EXPORT DarknetTargets
   RUNTIME DESTINATION "${INSTALL_BIN_DIR}"
-  LIBRARY DESTINATION "${INSTALL_LIB_DIR}"
-  ARCHIVE DESTINATION "${INSTALL_LIB_DIR}"
   PUBLIC_HEADER DESTINATION "${INSTALL_INCLUDE_DIR}"
   COMPONENT dev
 )
-install(TARGETS uselib darknet
+install(TARGETS darknet
   DESTINATION "${INSTALL_BIN_DIR}"
 )
 if(OpenCV_FOUND AND OpenCV_VERSION VERSION_GREATER "3.0" AND BUILD_USELIB_TRACK)

@@ -507,7 +507,7 @@ int main(int argc, char **argv)
     } else if (0 == strcmp(argv[1], "coco")){
         run_coco(argc, argv);
     } else if (0 == strcmp(argv[1], "classify")){
-        predict_classifier("cfg/imagenet1k.data", argv[2], argv[3], argv[4], 5);
+        predict_classifier(argv[2], argv[3], argv[4], argv[5], argv[6]);
     } else if (0 == strcmp(argv[1], "classifier")){
         run_classifier(argc, argv);
     } else if (0 == strcmp(argv[1], "art")){
