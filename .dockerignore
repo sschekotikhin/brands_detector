@@ -1,0 +1,12 @@
+.gitignore
+README.md
+.vscode/
+network/share/
+venv/
+test/
+*.list
+predictions.jpg
+*.workspace
+.git/
+.DS_Store
+bin/darknet

@@ -16,3 +16,5 @@ __pycache__/
 
 *.list
 build_release/
+
+libdarknet.*
