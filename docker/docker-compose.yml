@@ -3,6 +3,8 @@ version: '3.8'
 services:
   darknet:
     restart: always
+    volumes:
+      - ~/volume/photos:/data
     build:
       context: ../
       dockerfile: docker/Dockerfile.darknet
