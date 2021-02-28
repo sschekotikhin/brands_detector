@@ -6,7 +6,7 @@ networks:
       name: shared
 
 services:
-  api:
+  brands_detector:
     restart: always
     container_name: brands_detector_${FLASK_ENV}_api
     networks:
@@ -15,11 +15,7 @@ services:
       - 0.0.0.0:8080:8080
     build:
       context: ../
-      dockerfile: docker/Dockerfile.api
+      dockerfile: docker/Dockerfile
       args:
         FLASK_ENV: ${FLASK_ENV}
         SECRET_KEY_BASE: ${SECRET_KEY_BASE}
-  darknet:
-    build:
-      context: ../
-      dockerfile: docker/Dockerfile.darknet
