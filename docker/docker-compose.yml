@@ -13,6 +13,8 @@ services:
       - shared
     ports:
       - 0.0.0.0:8080:8080
+    volumes:
+      - ~/volume/photos:/volume/photos
     build:
       context: ../
       dockerfile: docker/Dockerfile
