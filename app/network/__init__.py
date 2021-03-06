@@ -34,8 +34,6 @@ class BrandsDetector:
             Defaults to 'cfg/brands.weights'.
         """
         # создаем директорию, если ее не существует
-        Path(destination).mkdir(parents=True, exist_ok=True)
-        self.destination = destination
         self.prediction_file = prediction_file
 
         self.darknet_path = darknet_path
@@ -66,7 +64,8 @@ class BrandsDetector:
             ]
         """
         # файл, в который будет сохранена картинка с результатом
-        predicted = f'{self.destination}/{path.basename(p=image)}'
+        filename = path.splitext(p=image)
+        predicted = f"{path.dirname(image)}/result{filename[-1]}"
 
         # TODO: подумать над библиотекой на C
         # вызываем сеть
@@ -83,7 +82,11 @@ class BrandsDetector:
         # при этом сохраняя исходное название файла
         rename(self.prediction_file, predicted)
 
-        return [{ 'brand': '', 'precision': '', 'image': predicted }]
+        return [{
+            'brand': '',
+            'precision': '',
+            'image': predicted
+        }]
 
 
 if __name__ == '__main__':

@@ -21,4 +21,4 @@ libdarknet.*
 
 .env
 
-app/public/images/
+app/public/store/

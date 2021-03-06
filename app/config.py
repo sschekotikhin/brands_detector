@@ -7,6 +7,8 @@ class Config(object):
     DEBUG = False
     TESTING = False
     SECRET_KEY = os.getenv(key='SECRET_KEY_BASE')
+    UPLOADS_FOLDER = 'app/public/store'
+    ALLOWED_EXTENSIONS = {'jpg', 'png', 'jpeg'}
 
 
 class DevelopmentConfig(Config):

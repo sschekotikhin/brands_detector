@@ -10,4 +10,9 @@ def init(app: Flask) -> Flask:
     Returns:
         Flask: приложение
     """
+    from app.routes.api.v1.detect import blueprint
+
+    # blueprint для апи по распознованию картинок
+    app.register_blueprint(blueprint=blueprint)
+
     return app
