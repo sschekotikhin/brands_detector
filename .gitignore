@@ -20,3 +20,5 @@ build_release/
 libdarknet.*
 
 .env
+
+app/public/images/
