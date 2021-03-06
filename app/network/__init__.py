@@ -19,9 +19,9 @@ class BrandsDetector:
     ) -> None:
         """
         Args:
-            destination (str): Путь до директории, в которую
+            destination (str, optional): Путь до директории, в которую
             будет сохранено изображение. Если директории не существует, то она
-            будет создана.
+            будет создана. Defaults to 'app/public/images'
             prediction_file (str, optional): Путь до файла с результатом работы сети.
             Defaults to 'predictions.jpg'.
             darknet_path (str, optional): Путь до исполняемого файла.
