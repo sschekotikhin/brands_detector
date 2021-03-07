@@ -1,5 +1,4 @@
 from typing import List
-from pathlib import Path
 from os import rename, path
 from subprocess import call
 
@@ -10,7 +9,6 @@ class BrandsDetector:
     """
     def __init__(
         self,
-        destination: str = 'app/public/images',
         prediction_file = 'predictions.jpg',
         darknet_path: str = 'bin/darknet',
         data_path: str = 'data/brands.data',
@@ -19,9 +17,6 @@ class BrandsDetector:
     ) -> None:
         """
         Args:
-            destination (str, optional): Путь до директории, в которую
-            будет сохранено изображение. Если директории не существует, то она
-            будет создана. Defaults to 'app/public/images'
             prediction_file (str, optional): Путь до файла с результатом работы сети.
             Defaults to 'predictions.jpg'.
             darknet_path (str, optional): Путь до исполняемого файла.
@@ -81,11 +76,12 @@ class BrandsDetector:
         # перемещаем результат работы сети в папку с результатами
         # при этом сохраняя исходное название файла
         rename(self.prediction_file, predicted)
+        result = f"/download/{'/'.join(predicted.split('/')[-2:])}"
 
         return [{
             'brand': '',
             'precision': '',
-            'image': predicted
+            'image': result
         }]
 
 
