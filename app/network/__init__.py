@@ -1,6 +1,7 @@
+import re
 from typing import List
 from os import rename, path
-from subprocess import call
+from subprocess import PIPE, Popen
 
 
 class BrandsDetector:
@@ -49,14 +50,20 @@ class BrandsDetector:
             List[hash]: список изображений с данными о них
         
         Examples:
-            >>> brands_detector.detect(image='/Users/sergei_schekotikhin/Studying/brands_detector/test/3da2ba3337-4_1200x.jpg')
-            [
-                {
-                    'brand': 'Adidas',
-                    'precision': 1.0,
-                    'image': '/Users/sergei_schekotikhin/Studying/brands_detector/app/images/3da2ba3337-4_1200x.jpg'
-                }
-            ]
+            >>> brands_detector.detect(image='test/3da2ba3337-4_1200x.jpg')
+            {
+                "coincidences": [
+                    {
+                        "brand": "Puma",
+                        "precision": 1.0
+                    },
+                    {
+                        "brand": "Puma",
+                        "precision": 0.28
+                    }
+                ],
+                "image": "/download/64559380_futbolka-mujskaya-puma-6555611-l/result.jpg"
+            }
         """
         # файл, в который будет сохранена картинка с результатом
         filename = path.splitext(p=image)
@@ -64,25 +71,30 @@ class BrandsDetector:
 
         # TODO: подумать над библиотекой на C
         # вызываем сеть
-        call(args=[
+        proc = Popen(args=[
             self.darknet_path,
             'detector', 'test',
             self.data_path,
             self.cfg_path,
             self.weights_path,
             image
-        ])
+        ], stdout=PIPE)
+        # список распознанных брендов
+        # ищем строки формата Adidas: 73% и вытаскиваем из них нужные данные
+        recognized = list(map(
+            lambda pair: { 'brand': pair[0], 'precision': int(pair[1]) / 100 },
+            re.findall(r'\\n(\w+): (\d+)%', str(proc.stdout.read()))
+        ))
 
         # перемещаем результат работы сети в папку с результатами
         # при этом сохраняя исходное название файла
         rename(self.prediction_file, predicted)
-        result = f"/download/{'/'.join(predicted.split('/')[-2:])}"
+        result_img = f"/download/{'/'.join(predicted.split('/')[-2:])}"
 
-        return [{
-            'brand': '',
-            'precision': '',
-            'image': result
-        }]
+        return {
+            'image': result_img,
+            'coincidences': recognized
+        }
 
 
 if __name__ == '__main__':
