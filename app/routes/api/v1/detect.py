@@ -22,8 +22,7 @@ def detect():
     detector = BrandsDetector()
     
     for image in request.files.getlist('images[]'):
-        if allowed_file(image.filename):
-            path = save_image(image)
-            result.append(detector.detect(path))
+        path = save_image(image)
+        result.append(detector.detect(path))
 
     return jsonify(result)
