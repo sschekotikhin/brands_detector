@@ -1,5 +1,4 @@
 import re
-from typing import List
 from os import rename, path
 from subprocess import PIPE, Popen
 
@@ -37,7 +36,7 @@ class BrandsDetector:
         self.cfg_path = cfg_path
         self.weights_path = weights_path
 
-    def detect(self, image: str) -> List[hash]:
+    def detect(self, image: str) -> dict:
         """
         По входному изображению определяет:
         - бренды, представленные на фото
@@ -47,7 +46,7 @@ class BrandsDetector:
             image (str): путь до файла
 
         Returns:
-            List[hash]: список изображений с данными о них
+            dict: список изображений с данными о них
         
         Examples:
             >>> brands_detector.detect(image='test/3da2ba3337-4_1200x.jpg')

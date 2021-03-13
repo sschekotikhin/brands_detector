@@ -1,9 +1,9 @@
 from flask import Blueprint, jsonify
-from flask.globals import current_app, request
+from flask.globals import request
 
 from app.network import BrandsDetector
 
-from app.utils import allowed_file, save_image
+from app.utils import save_image
 
 
 blueprint = Blueprint(
